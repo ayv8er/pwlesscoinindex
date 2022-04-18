@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
-
+import { magic } from "../magic";
 import axios from "axios";
 
 import Login from "./Login";
@@ -8,11 +8,14 @@ import Callback from "./Callback";
 import Profile from "./Profile";
 import CoinIndex from "./CoinIndex";
 
+import { UserContext } from "../store/user-context";
+
 import styled from "styled-components";
 import { Container } from "react-bootstrap";
 
 export default function App() {
   const [coinIndex, setCoinIndex] = useState([]);
+  const [user, setUser] = useState();
 
   useEffect(() => {
     axios
@@ -27,17 +30,30 @@ export default function App() {
       });
   }, []);
 
+  useEffect(() => {
+    setUser({ loading: true });
+    magic.user
+      .isLoggedIn()
+      .then((isLoggedIntoMagic) =>
+        isLoggedIntoMagic
+          ? magic.user.getMetaData().then((userData) => setUser(userData))
+          : setUser({ user: null })
+      );
+  }, []);
+
   return (
-    <StyledApp>
-      <Container fluid>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/callback" element={<Callback />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/" element={<CoinIndex coinIndex={coinIndex} />} />
-        </Routes>
-      </Container>
-    </StyledApp>
+    <UserContext.Provider value={[user, setUser]}>
+      <StyledApp>
+        <Container fluid>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/callback" element={<Callback />} />
+            {/* <Route path="/profile" element={<Profile />} /> */}
+            <Route path="/" element={<CoinIndex coinIndex={coinIndex} />} />
+          </Routes>
+        </Container>
+      </StyledApp>
+    </UserContext.Provider>
   );
 }
 
