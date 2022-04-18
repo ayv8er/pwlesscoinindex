@@ -3,7 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { magic } from "../magic";
 import Loading from "./Loading";
 
-export default function Profile() {
+import Coin from "./Coin";
+import Nav from "./Nav";
+
+import styled from "styled-components";
+
+export default function CoinIndex(props) {
+  const { coinIndex } = props;
   const [userMetadata, setUserMetadata] = useState();
   const navigate = useNavigate();
 
@@ -12,9 +18,11 @@ export default function Profile() {
     // If so, we'll retrieve the authenticated user's profile.
     magic.user.isLoggedIn().then((magicIsLoggedIn) => {
       if (magicIsLoggedIn) {
+        console.log("here?");
         magic.user.getMetadata().then(setUserMetadata);
       } else {
         // If no user is logged in, redirect to `/login`
+        console.log("or here?");
         navigate("/login");
       }
     });
@@ -29,12 +37,36 @@ export default function Profile() {
     });
   }, [navigate]);
 
+  const tableHeaders = [
+    "#",
+    "Name",
+    "Price",
+    "Market Cap",
+    "Circulating Supply",
+    "Total Supply",
+  ];
+
   return userMetadata ? (
-    <div className="container">
-      <h1>Current user: {userMetadata.email}</h1>
-      <button onClick={logout}>Logout</button>
-    </div>
+    <StyledCoinIndex>
+      <Nav />
+      <table className="table table-light table-hover table-striped">
+        <thead>
+          <tr>
+            {tableHeaders.map((header, index) => (
+              <th key={index}>{header}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {coinIndex.map((coin) => (
+            <Coin key={coin.id} coin={coin} />
+          ))}
+        </tbody>
+      </table>
+    </StyledCoinIndex>
   ) : (
     <Loading />
   );
 }
+
+const StyledCoinIndex = styled.div``;

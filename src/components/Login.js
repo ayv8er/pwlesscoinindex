@@ -1,17 +1,24 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { magic } from "../magic";
+
+import { UserContext } from "../store/user-context";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [user, setUser] = useContext(UserContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    user && user.issuer && navigate("/");
+  }, [user, navigate]);
 
   /**
    * Perform login action via Magic's passwordless flow. Upon successuful
    * completion of the login flow, a user is redirected to the homepage.
    */
-  const login = useCallback(async () => {
+  const handleLogin = async () => {
     setIsLoggingIn(true);
 
     try {
@@ -19,11 +26,10 @@ export default function Login() {
         email,
         redirectURI: new URL("/callback", window.location.origin).href,
       });
-      navigate("/");
     } catch {
       setIsLoggingIn(false);
     }
-  }, [email]);
+  };
 
   /**
    * Saves the value of our email input into component state.
@@ -43,7 +49,7 @@ export default function Login() {
         onChange={handleInputOnChange}
         disabled={isLoggingIn}
       />
-      <button onClick={login} disabled={isLoggingIn}>
+      <button onClick={handleLogin} disabled={isLoggingIn}>
         Send
       </button>
     </div>
