@@ -1,18 +1,12 @@
-import { useCallback, useState, useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { magic } from "../magic";
 
-import { UserContext } from "../store/user-context";
+import styled from "styled-components";
+import { Card, Button } from "react-bootstrap";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [user, setUser] = useContext(UserContext);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    user && user.issuer && navigate("/");
-  }, [user, navigate]);
 
   /**
    * Perform login action via Magic's passwordless flow. Upon successuful
@@ -20,7 +14,6 @@ export default function Login() {
    */
   const handleLogin = async () => {
     setIsLoggingIn(true);
-
     try {
       await magic.auth.loginWithMagicLink({
         email,
@@ -31,27 +24,44 @@ export default function Login() {
     }
   };
 
-  /**
-   * Saves the value of our email input into component state.
-   */
-  const handleInputOnChange = useCallback((event) => {
+  const handleChange = (event) => {
+    event.preventDefault();
     setEmail(event.target.value);
-  }, []);
+  };
 
   return (
-    <div className="container">
-      <h1>Please sign up or login</h1>
-      <input
-        type="email"
-        name="email"
-        required="required"
-        placeholder="Enter your email"
-        onChange={handleInputOnChange}
-        disabled={isLoggingIn}
-      />
-      <button onClick={handleLogin} disabled={isLoggingIn}>
-        Send
-      </button>
-    </div>
+    <StyledLogin>
+      <Card style={{ width: "300px" }}>
+        <Card.Header style={{ fontSize: "20px", textAlign: "center" }}>
+          Please sign up or login
+        </Card.Header>
+        <Card.Body style={{ textAlign: "center" }}>
+          <input
+            type="email"
+            name="email"
+            required="required"
+            placeholder="Enter your email"
+            onChange={handleChange}
+            disabled={isLoggingIn}
+          />{" "}
+        </Card.Body>
+        <Card.Footer style={{ textAlign: "center" }}>
+          <Button
+            style={{ width: "30%" }}
+            onClick={handleLogin}
+            disabled={isLoggingIn}
+          >
+            Send
+          </Button>
+        </Card.Footer>
+      </Card>
+    </StyledLogin>
   );
 }
+
+const StyledLogin = styled.div`
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;

@@ -1,41 +1,15 @@
-import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { magic } from "../magic";
-import Loading from "./Loading";
+import { useContext } from "react";
 
 import Coin from "./Coin";
 import Nav from "./Nav";
 
+import { CoinIndexContext } from "../store/coin-index-context";
+
 import styled from "styled-components";
+import { Table } from "react-bootstrap";
 
-export default function CoinIndex(props) {
-  const { coinIndex } = props;
-  const [userMetadata, setUserMetadata] = useState();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    // On mount, we check if a user is logged in.
-    // If so, we'll retrieve the authenticated user's profile.
-    magic.user.isLoggedIn().then((magicIsLoggedIn) => {
-      if (magicIsLoggedIn) {
-        console.log("here?");
-        magic.user.getMetadata().then(setUserMetadata);
-      } else {
-        // If no user is logged in, redirect to `/login`
-        console.log("or here?");
-        navigate("/login");
-      }
-    });
-  }, []);
-
-  /**
-   * Perform logout action via Magic.
-   */
-  const logout = useCallback(() => {
-    magic.user.logout().then(() => {
-      navigate("/login");
-    });
-  }, [navigate]);
+export default function CoinIndex() {
+  const coinIndex = useContext(CoinIndexContext);
 
   const tableHeaders = [
     "#",
@@ -46,10 +20,10 @@ export default function CoinIndex(props) {
     "Total Supply",
   ];
 
-  return userMetadata ? (
+  return (
     <StyledCoinIndex>
       <Nav />
-      <table className="table table-light table-hover table-striped">
+      <Table striped bordered hover light>
         <thead>
           <tr>
             {tableHeaders.map((header, index) => (
@@ -62,11 +36,16 @@ export default function CoinIndex(props) {
             <Coin key={coin.id} coin={coin} />
           ))}
         </tbody>
-      </table>
+      </Table>
     </StyledCoinIndex>
-  ) : (
-    <Loading />
   );
 }
 
-const StyledCoinIndex = styled.div``;
+const StyledCoinIndex = styled.div`
+  height: 100vh;
+
+  .table {
+    height: 90vh;
+    overflow-y: scroll;
+  }
+`;

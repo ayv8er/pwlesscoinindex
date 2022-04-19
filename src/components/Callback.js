@@ -1,17 +1,30 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { magic } from "../magic";
+
 import Loading from "./Loading";
+
+import styled from "styled-components";
 
 export default function Callback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // On mount, we try to login with a Magic credential in the URL query.
     magic.auth.loginWithCredential().finally(() => {
       navigate("/");
     });
   }, []);
 
-  return <Loading />;
+  return (
+    <StyledCallback>
+      <Loading />;
+    </StyledCallback>
+  );
 }
+
+const StyledCallback = styled.div`
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
