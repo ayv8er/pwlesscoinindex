@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { magic } from "../magic";
 import axios from "axios";
 
 import Login from "./Login";
 import Callback from "./Callback";
-import Profile from "./Profile";
 import CoinIndex from "./CoinIndex";
 
 import { UserContext } from "../store/user-context";
+import { CoinIndexContext } from "../store/coin-index-context";
 
-import styled from "styled-components";
 import { Container } from "react-bootstrap";
 
 export default function App() {
   const [coinIndex, setCoinIndex] = useState([]);
-  const [user, setUser] = useState();
+  const [userMetadata, setUserMetadata] = useState();
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -31,30 +31,29 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    setUser({ loading: true });
-    magic.user
-      .isLoggedIn()
-      .then((isLoggedIntoMagic) =>
-        isLoggedIntoMagic
-          ? magic.user.getMetaData().then((userData) => setUser(userData))
-          : setUser({ user: null })
-      );
+    magic.user.isLoggedIn().then((magicIsLoggedIn) => {
+      if (magicIsLoggedIn) {
+        magic.user.getMetadata().then((userData) => {
+          setUserMetadata(userData);
+        });
+      } else {
+        setUserMetadata(null);
+        navigate("/login");
+      }
+    });
   }, []);
 
   return (
-    <UserContext.Provider value={[user, setUser]}>
-      <StyledApp>
+    <UserContext.Provider value={[userMetadata, setUserMetadata]}>
+      <CoinIndexContext.Provider value={coinIndex}>
         <Container fluid>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/callback" element={<Callback />} />
-            {/* <Route path="/profile" element={<Profile />} /> */}
-            <Route path="/" element={<CoinIndex coinIndex={coinIndex} />} />
+            <Route path="/" element={<CoinIndex />} />
           </Routes>
         </Container>
-      </StyledApp>
+      </CoinIndexContext.Provider>
     </UserContext.Provider>
   );
 }
-
-const StyledApp = styled.div``;
