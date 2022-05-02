@@ -9,6 +9,7 @@ import styled from "styled-components";
 export default function Callback() {
   const navigate = useNavigate();
 
+  // loginWithCredential useful when calling loginWithMagicLink with a redirectURI
   useEffect(() => {
     magic.auth.loginWithCredential().finally(() => {
       navigate("/");

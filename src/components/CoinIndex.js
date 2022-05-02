@@ -1,5 +1,6 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
+import UpdateCredModal from "./UpdateCredModal";
 import Coin from "./Coin";
 import Nav from "./Nav";
 
@@ -9,6 +10,7 @@ import styled from "styled-components";
 import { Table } from "react-bootstrap";
 
 export default function CoinIndex() {
+  const [isUpdateCred, setIsUpdateCred] = useState(false);
   const coinIndex = useContext(CoinIndexContext);
 
   const tableHeaders = [
@@ -22,7 +24,8 @@ export default function CoinIndex() {
 
   return (
     <StyledCoinIndex>
-      <Nav />
+      {isUpdateCred && <UpdateCredModal setIsUpdateCred={setIsUpdateCred} />}
+      <Nav setIsUpdateCred={setIsUpdateCred} />
       <Table striped bordered hover light>
         <thead>
           <tr>

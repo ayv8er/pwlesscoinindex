@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { magic } from "../magic";
 import axios from "axios";
 
 import Login from "./Login";
-import Callback from "./Callback";
 import CoinIndex from "./CoinIndex";
+import LoginWithMagicLink from "./loginmethods/LoginWithMagicLink";
+import LoginWithEmailOTP from "./loginmethods/LoginWithEmailOTP";
+import LoginWithSMS from "./loginmethods/LoginWithSMS";
+import LoginUnselected from "./loginmethods/LoginUnselected";
+import ProtectedRoute from "./ProtectedRoute";
 
 import { UserContext } from "../store/user-context";
 import { CoinIndexContext } from "../store/coin-index-context";
@@ -15,7 +19,6 @@ import { Container } from "react-bootstrap";
 export default function App() {
   const [coinIndex, setCoinIndex] = useState([]);
   const [userMetadata, setUserMetadata] = useState();
-  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -38,7 +41,6 @@ export default function App() {
         });
       } else {
         setUserMetadata(null);
-        navigate("/login");
       }
     });
   }, []);
@@ -48,9 +50,14 @@ export default function App() {
       <CoinIndexContext.Provider value={coinIndex}>
         <Container fluid>
           <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/callback" element={<Callback />} />
-            <Route path="/" element={<CoinIndex />} />
+            <Route path="/" element={<Login />}>
+              <Route index element={<LoginUnselected />} />
+              <Route path="*" element={<LoginUnselected />} />
+              <Route path="link" element={<LoginWithMagicLink />} />
+              <Route path="otp" element={<LoginWithEmailOTP />} />
+              <Route path="sms" element={<LoginWithSMS />} />
+            </Route>
+            <Route path="index" element={<CoinIndex />} />
           </Routes>
         </Container>
       </CoinIndexContext.Provider>

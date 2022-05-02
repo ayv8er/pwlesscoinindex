@@ -1,59 +1,32 @@
-import { useState } from "react";
-import { magic } from "../magic";
+import { Outlet, Link } from "react-router-dom";
 
+import { Card, Nav } from "react-bootstrap";
 import styled from "styled-components";
-import { Card, Button } from "react-bootstrap";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-
-  /**
-   * Perform login action via Magic's passwordless flow. Upon successuful
-   * completion of the login flow, a user is redirected to the homepage.
-   */
-  const handleLogin = async () => {
-    setIsLoggingIn(true);
-    try {
-      await magic.auth.loginWithMagicLink({
-        email,
-        redirectURI: new URL("/callback", window.location.origin).href,
-      });
-    } catch {
-      setIsLoggingIn(false);
-    }
-  };
-
-  const handleChange = (event) => {
-    event.preventDefault();
-    setEmail(event.target.value);
-  };
-
   return (
     <StyledLogin>
-      <Card style={{ width: "300px" }}>
-        <Card.Header style={{ fontSize: "20px", textAlign: "center" }}>
-          Please sign up or login
+      <Card style={{ width: "380px" }}>
+        <Card.Header>
+          <Nav variant="pills">
+            <Nav.Item>
+              <Nav.Link as={Link} to="link">
+                Magic Link
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={Link} to="otp">
+                Email OTP
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={Link} to="sms">
+                Phone SMS
+              </Nav.Link>
+            </Nav.Item>
+          </Nav>
         </Card.Header>
-        <Card.Body style={{ textAlign: "center" }}>
-          <input
-            type="email"
-            name="email"
-            required="required"
-            placeholder="Enter your email"
-            onChange={handleChange}
-            disabled={isLoggingIn}
-          />{" "}
-        </Card.Body>
-        <Card.Footer style={{ textAlign: "center" }}>
-          <Button
-            style={{ width: "30%" }}
-            onClick={handleLogin}
-            disabled={isLoggingIn}
-          >
-            Send
-          </Button>
-        </Card.Footer>
+        <Outlet />
       </Card>
     </StyledLogin>
   );
