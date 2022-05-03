@@ -18,6 +18,7 @@ import { Container } from "react-bootstrap";
 
 export default function App() {
   const [coinIndex, setCoinIndex] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userMetadata, setUserMetadata] = useState();
 
   useEffect(() => {
@@ -34,15 +35,22 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    magic.user.isLoggedIn().then((magicIsLoggedIn) => {
-      if (magicIsLoggedIn) {
-        magic.user.getMetadata().then((userData) => {
-          setUserMetadata(userData);
-        });
-      } else {
-        setUserMetadata(null);
+    async function fetchUser() {
+      try {
+        const magicIsLoggedIn = await magic.user.isLoggedIn();
+        setIsLoggedIn(magicisLoggedIn);
+        if (magicIsLoggedIn) {
+          magic.user.getMetadata().then((userData) => {
+            setUserMetadata(userData);
+          });
+        } else {
+          setUserMetadata(null);
+        }
+      } catch (err) {
+        console.log(err);
       }
-    });
+    }
+    fetchUser();
   }, []);
 
   return (
@@ -57,7 +65,14 @@ export default function App() {
               <Route path="otp" element={<LoginWithEmailOTP />} />
               <Route path="sms" element={<LoginWithSMS />} />
             </Route>
-            <Route path="index" element={<CoinIndex />} />
+            <Route
+              path="index"
+              element={
+                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                  <CoinIndex />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Container>
       </CoinIndexContext.Provider>
