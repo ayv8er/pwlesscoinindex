@@ -9,6 +9,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@magic-ext/oauth": "^2.1.1",
     "axios": "^0.26.1",
     "bootstrap": "^5.1.3",
     "magic-sdk": "^8.1.1",
