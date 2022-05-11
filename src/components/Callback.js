@@ -6,15 +6,21 @@ import Loading from "./Loading";
 
 import styled from "styled-components";
 
-export default function Callback() {
+export default function Callback(props) {
+  const { setUserMetadata } = props;
   const navigate = useNavigate();
 
-  // loginWithCredential useful when calling loginWithMagicLink with a redirectURI
   useEffect(() => {
-    magic.auth.loginWithCredential().finally(() => {
-      navigate("/");
-    });
-  }, []);
+    magic.oauth
+      .getRedirectResult()
+      .then((result) => {
+        setUserMetadata(result.magic.userMetadata);
+        navigate("/index");
+      })
+      .catch((err) => {
+        navigate("/");
+      });
+  });
 
   return (
     <StyledCallback>
