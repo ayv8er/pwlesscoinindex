@@ -1,8 +1,10 @@
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-export default function ProtectedRoute({ isLoggedIn, children }) {
-  if (!isLoggedIn) {
-    return <Navigate to="/" replace />;
+export default function ProtectedRoute(props, { children }) {
+  const navigate = useNavigate();
+  if (props.userMetaData === null) {
+    navigate("/");
+  } else {
+    return children;
   }
-  return children;
 }

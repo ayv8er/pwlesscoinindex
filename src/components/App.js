@@ -5,11 +5,16 @@ import axios from "axios";
 
 import Login from "./Login";
 import CoinIndex from "./CoinIndex";
+import ProtectedRoute from "./ProtectedRoute";
+import Callback from "./Callback";
 import LoginWithMagicLink from "./loginmethods/LoginWithMagicLink";
 import LoginWithEmailOTP from "./loginmethods/LoginWithEmailOTP";
 import LoginWithSMS from "./loginmethods/LoginWithSMS";
 import LoginUnselected from "./loginmethods/LoginUnselected";
-import ProtectedRoute from "./ProtectedRoute";
+import LoginWithTwitter from "./loginmethods/twitterLogin";
+import LoginWithGoogle from "./loginmethods/googleLogin";
+import LoginWithFacebook from "./loginmethods/facebookLogin";
+import LoginWithGithub from "./loginmethods/githubLogin";
 
 import { UserContext } from "../store/user-context";
 import { CoinIndexContext } from "../store/coin-index-context";
@@ -38,12 +43,13 @@ export default function App() {
     async function fetchUser() {
       try {
         const magicIsLoggedIn = await magic.user.isLoggedIn();
-        setIsLoggedIn(magicisLoggedIn);
         if (magicIsLoggedIn) {
           magic.user.getMetadata().then((userData) => {
+            setIsLoggedIn(true);
             setUserMetadata(userData);
           });
         } else {
+          setIsLoggedIn(false);
           setUserMetadata(null);
         }
       } catch (err) {
@@ -64,14 +70,15 @@ export default function App() {
               <Route path="link" element={<LoginWithMagicLink />} />
               <Route path="otp" element={<LoginWithEmailOTP />} />
               <Route path="sms" element={<LoginWithSMS />} />
+              <Route path="twitter" element={<LoginWithTwitter />} />
+              <Route path="google" element={<LoginWithGoogle />} />
+              <Route path="facebook" element={<LoginWithFacebook />} />
+              <Route path="github" element={<LoginWithGithub />} />
             </Route>
+            <Route path="index" element={<CoinIndex />} />
             <Route
-              path="index"
-              element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
-                  <CoinIndex />
-                </ProtectedRoute>
-              }
+              path="callback"
+              element={<Callback setUserMetadata={setUserMetadata} />}
             />
           </Routes>
         </Container>
