@@ -15,6 +15,7 @@ import LoginWithTwitter from "./loginmethods/twitterLogin";
 import LoginWithGoogle from "./loginmethods/googleLogin";
 import LoginWithFacebook from "./loginmethods/facebookLogin";
 import LoginWithGithub from "./loginmethods/githubLogin";
+import LoginWithWebAuthn from "./loginmethods/webAuthnLogin";
 
 import { UserContext } from "../store/user-context";
 import { CoinIndexContext } from "../store/coin-index-context";
@@ -74,6 +75,7 @@ export default function App() {
               <Route path="google" element={<LoginWithGoogle />} />
               <Route path="facebook" element={<LoginWithFacebook />} />
               <Route path="github" element={<LoginWithGithub />} />
+              <Route path="webauthn" element={<LoginWithWebAuthn />} />
             </Route>
             <Route path="index" element={<CoinIndex />} />
             <Route
