@@ -12,8 +12,8 @@ export default function Login() {
   return (
     <StyledLogin>
       <Card className="card">
-        <Card.Header className="social">
-          <Nav variant="pills">
+        <Card.Header>
+          <Nav variant="pills" className="social">
             <Nav.Item>
               <Nav.Link as={Link} to="google">
                 <img src={google} />
@@ -53,6 +53,11 @@ export default function Login() {
                 Phone SMS
               </Nav.Link>
             </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={Link} to="webauthn">
+                Web Authn
+              </Nav.Link>
+            </Nav.Item>
           </Nav>
         </Card.Header>
         <Outlet />
@@ -71,11 +76,11 @@ const StyledLogin = styled.div`
     height: 50px;
   }
   .card {
-    width: 380px;
+    width: 500px;
   }
   .social {
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
   }
   #github {
     background: black;
